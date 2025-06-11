@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://src/levels/level_configuration.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+level_name = "The First Stand"
+grid_width = 22
+grid_height = 12
+path_seed = 12345 # Semilla específica para este nivel, para un camino reproducible
+number_of_waves = 5 # Este nivel tendrá exactamente 5 oleadas
