@@ -27,7 +27,7 @@ func setup_level(path_gen_node):
 	current_wave = 0
 	# total_waves_for_level = rng.randi_range(4, 7) # Original
 	total_waves_for_level = rng.randi_range(3, 5) # Ajustado para probar jefe en ola 3 más rápido
-	print("Level setup with " + str(total_waves_for_level) + " waves.")
+	# print("Level setup with " + str(total_waves_for_level) + " waves.") # Redundant if MainGame prints level name
 
 func start_next_wave():
 	if current_wave >= total_waves_for_level:
@@ -112,9 +112,19 @@ func start_next_wave_simulation(path_generator_ref):
 	var demons_to_spawn = base_demons_count + (demon_increment_per_wave * (current_wave - 1))
 	var spawn_boss = (current_wave % 3 == 0)
 
-	var calculated_demon_health = base_demon_health + (demon_health_increment_per_wave * (current_wave - 1))
-	if calculated_demon_health < base_demon_health:
-		calculated_demon_health = base_demon_health
+	# Obtener multiplicador de dificultad de GameManager (Autoload)
+	var difficulty_mult: float = 1.0 # Renamed for clarity
+	if GameManager: # Chequear si el Autoload está disponible
+		difficulty_mult = GameManager.get_difficulty_multiplier() # Usar el getter general
+	else:
+		printerr("WaveManager: GameManager Autoload not found! Defaulting difficulty multiplier to 1.0")
+
+	var calculated_demon_health_base_for_wave = base_demon_health + (demon_health_increment_per_wave * (current_wave - 1))
+	if calculated_demon_health_base_for_wave < base_demon_health:
+		calculated_demon_health_base_for_wave = base_demon_health
+
+	# Aplicar multiplicador de dificultad
+	var final_demon_health_for_wave = calculated_demon_health_base_for_wave * difficulty_mult
 
 	var spawn_pos = Vector2.ZERO
 	var p_points = []
@@ -129,17 +139,24 @@ func start_next_wave_simulation(path_generator_ref):
 		return
 
 	for i in range(demons_to_spawn):
-		emit_signal("spawn_enemy", "DemonScenePlaceholder", spawn_pos, p_points, calculated_demon_health)
-		print("WaveManager: Simulating spawn: Demon " + str(i+1) + " with health " + str(calculated_demon_health))
+		emit_signal("spawn_enemy", "DemonScenePlaceholder", spawn_pos, p_points, final_demon_health_for_wave)
+		# print("WaveManager: Simulating spawn: Demon " + str(i+1) + " with health " + str(final_demon_health_for_wave)) # MainGame logs this
 		simulated_enemies_alive += 1
 
 	if spawn_boss:
-		# DemonBoss usa su vida por defecto, así que -1.0 o cualquier valor < 0 indica esto a MainGame.
-		emit_signal("spawn_enemy", "DemonBossScenePlaceholder", spawn_pos, p_points, -1.0)
-		print("WaveManager: Simulating spawn: DemonBoss (using its default health).")
+		# La vida del jefe también podría escalar con dificultad si quisiéramos.
+		# Por ahora, el jefe usa su vida por defecto (-1.0 signal).
+		# Si quisiéramos que escale:
+		var boss_base_hp = 200.0 # Asumiendo que DemonBoss.gd tiene 200 por defecto o leerlo de una constante
+		# Si DemonBoss tiene una constante `BASE_HEALTH` podríamos usarla:
+		# var boss_script = load("res://src/core/entities/attackers/demon_boss.gd")
+		# if boss_script and boss_script.has_constant("BASE_HEALTH"): boss_base_hp = boss_script.BASE_HEALTH
+		var final_boss_health = boss_base_hp * difficulty_mult # Usar el multiplicador general
+		emit_signal("spawn_enemy", "DemonBossScenePlaceholder", spawn_pos, p_points, final_boss_health)
+		# print("WaveManager: Simulating spawn: DemonBoss (default HP * diff mult = " + str(final_boss_health) +").") # MainGame logs this
 		simulated_enemies_alive += 1
 
-	print("Simulated wave " + str(current_wave) + " has " + str(simulated_enemies_alive) + " enemies.")
+	# print("Simulated wave " + str(current_wave) + " has " + str(simulated_enemies_alive) + " enemies.") # Verbose
 	if simulated_enemies_alive == 0:
 		_check_wave_completion_simulation()
 
@@ -155,8 +172,8 @@ func _check_wave_completion_simulation():
 	if simulated_enemies_alive == 0 and current_wave > 0:
 		print("Simulated Wave " + str(current_wave) + " completed.")
 		emit_signal("wave_completed", current_wave)
-	elif current_wave == 0: # Cambiado de current_wave > 0 a current_wave == 0 para el mensaje de "not started"
-		print("Wave manager reset or not started.") # Este mensaje parece más apropiado para current_wave == 0
+	elif current_wave == 0:
+		print("Wave manager reset or not started.")
 
 func get_current_wave_number() -> int:
 	return current_wave

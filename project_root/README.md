@@ -11,6 +11,12 @@ and some advanced gameplay interactions are the next major steps.
 
 ## Core Features Implemented (Scripts & Logic)
 
+*   **Game Difficulty System:**
+    *   Players can select a difficulty (Normal, Difficult, Hard) before starting a level (conceptual UI, logic in `GameManager.gd`).
+    *   **Normal:** Standard gameplay.
+    *   **Difficult:** Enemy health x2, Player starting coins x2.
+    *   **Hard:** Enemy health x4, Player starting coins x4.
+    *   `WaveManager.gd` scales enemy health (including bosses) based on this setting.
 *   **Dynamic Path Generation:**
     *   `PathGenerator.gd` creates randomized paths for attackers on a grid.
     *   Path characteristics (grid size, seed) can be defined per level via `LevelConfiguration` resources.
@@ -28,13 +34,12 @@ and some advanced gameplay interactions are the next major steps.
             *   Hielo: Slow (Ralentiza enemigos).
             *   Tierra/Aire: Pushback (Empuja enemigos hacia atrás en el camino).
         *   **Targeting AI:** Defenders can now use different targeting strategies:
-            *   `NEAREST_TO_SELF`: Targets the enemy closest to the defender.
-            *   `NEAREST_TO_END`: Targets the enemy closest to the end of the path.
-            *   `LOWEST_HEALTH`: Targets the enemy with the least current health.
-            *   `HIGHEST_HEALTH`: Targets the enemy with the most current health.
+            *   `NEAREST_TO_SELF`, `NEAREST_TO_END`, `LOWEST_HEALTH`, `HIGHEST_HEALTH`.
             *   This is configurable per defender type/instance.
-        *   **Tower Upgrades (Logic):** Defenders can be upgraded through multiple levels (e.g., 1-3).
-            *   Upgrading improves stats like damage, range, and attack speed.
+        *   **Tower Upgrades (Logic):** Defenders can be upgraded through 4 levels (Base + 3 upgrades).
+            *   **Damage:** Increases additively with each upgrade (e.g., Base, Base+3, Base+3+6, Base+3+6+5).
+            *   **Range:** Increases additively with each upgrade (e.g., Base, Base+2, Base+2+2, Base+2+2+2).
+            *   **Attack Speed:** Remains constant at its base value.
             *   Each defender type defines its own upgrade costs and stat progression.
             *   `GameManager.gd` handles the logic for attempting an upgrade and spending coins. (UI for this is a future step).
     *   **Atacantes (`Demon.gd`, `DemonBoss.gd`):**

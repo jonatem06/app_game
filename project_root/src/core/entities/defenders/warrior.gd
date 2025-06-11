@@ -8,18 +8,15 @@ func _init():
 	super._init(150.0, 15.0, 50.0, 1.2, 100)
 	self.name = "Warrior"
 
-	# Ejemplo de personalización de mejoras para el Guerrero:
-	self.upgrade_costs = [75, 150] # Costo Lvl1->2: 75, Lvl2->3: 150
-	self.upgrade_damage_factors = [1.0, 1.6, 2.2] # Daño: +60% en L2, +120% en L3
-	self.upgrade_range_factors =  [1.0, 1.1, 1.2]  # Rango: +10% en L2, +20% en L3
-	self.upgrade_speed_factors =  [1.0, 1.0, 1.1]  # Velocidad: sin cambio en L2, +10% en L3
+	# Personalización de mejoras para el Guerrero (opcional):
+	# Si el Guerrero tuviera costos de mejora diferentes a los de Defender.gd:
+	# self.upgrade_costs = [80, 130, 210]
+	# Si tuviera aumentos de daño aditivos diferentes:
+	# self.additive_damage_upgrades = [4, 7, 6] # Ej: +4, +7, +6 para L2, L3, L4
 
-	# Re-aplicar stats con los factores específicos del Warrior para Nivel 1.
-	# Esto es necesario si los factores de Nivel 1 aquí son diferentes de 1.0,
-	# o si los arrays de factores base en Defender.gd no tuvieran el tamaño adecuado
-	# y se quisiera asegurar que esta subclase usa sus propios arrays completos.
-	# Dado que Defender._init llama a apply_upgrade_stats(), y los factores de nivel 1
-	# son típicamente 1.0, esto podría ser redundante si los factores de nivel 1
-	# de esta clase también son 1.0. Sin embargo, para robustez y claridad si
-	# los factores de nivel 1 se personalizan para no ser 1.0, llamarlo de nuevo es más seguro.
-	apply_upgrade_stats()
+	# Los _factors multiplicativos ya no se usan.
+	# La llamada a apply_upgrade_stats() en Defender._init es suficiente
+	# para establecer los stats iniciales (Nivel 1), ya que el bucle de daño aditivo
+	# en apply_upgrade_stats (de Defender.gd) no se ejecutará para current_upgrade_level = 1,
+	# y rango/velocidad se establecen a sus valores base.
+	# No es necesario llamar a apply_upgrade_stats() aquí de nuevo.

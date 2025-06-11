@@ -26,15 +26,18 @@ func _init(element: int = Element.FIRE): # Permitir especificar elemento al crea
 		Element.AIR: self.name = "AirMage"
 		_: self.name = "Mage"
 
-	# Personalización de mejoras para el Mago:
-	self.upgrade_costs = [125, 250] # Lvl1->2: 125, Lvl2->3: 250
-	self.upgrade_damage_factors = [1.0, 1.5, 2.1]  # Daño: +50% L2, +110% L3
-	self.upgrade_range_factors =  [1.0, 1.15, 1.3] # Rango: +15% L2, +30% L3
-	self.upgrade_speed_factors =  [1.0, 1.1, 1.2]  # Vel Ataque: +10% L2, +20% L3
-	# Podríamos añadir: self.upgrade_status_chance_factors = [1.0, 1.5, 2.0] y aplicarlo en apply_upgrade_stats
+	# Personalización de mejoras para el Mago (opcional):
+	# Los costos de mejora ya están personalizados en la versión anterior, los adaptaremos.
+	self.upgrade_costs = [125, 250, 375] # Ejemplo: L1->2 (125), L2->3 (250), L3->4 (375)
 
-	# Re-aplicar stats con los factores específicos del Mago para Nivel 1.
-	apply_upgrade_stats()
+	# Si tuviera aumentos de daño aditivos diferentes al genérico de Defender.gd:
+	# self.additive_damage_upgrades = [2, 4, 6] # Ej: Daño: +2 (L2), +4 (L3), +6 (L4)
+	# Si tuviera aumentos de rango aditivos diferentes al genérico de Defender.gd:
+	# self.additive_range_upgrades = [15, 25, 35] # Ej: Rango: +15 (L2), +25 (L3), +35 (L4)
+	# También podría tener mejoras para `status_chance`.
+
+	# Los _factors multiplicativos y la llamada a apply_upgrade_stats() se eliminan.
+	# La llamada a apply_upgrade_stats() en Defender._init es suficiente.
 
 func attack():
 	super.attack()
@@ -52,14 +55,10 @@ func apply_elemental_status(current_target: Attacker):
 	# Por ahora, son constantes.
 	match elemental_type:
 		Element.FIRE:
-			# print(self.name + " applies FIRE effect to " + current_target.name)
 			current_target.apply_burn(BURN_DPS, BURN_DURATION)
 		Element.ICE:
-			# print(self.name + " applies ICE effect to " + current_target.name)
 			current_target.apply_slow(SLOW_FACTOR, SLOW_DURATION)
 		Element.EARTH:
-			# print(self.name + " applies EARTH (Pushback) effect to " + current_target.name)
 			current_target.apply_pushback(PUSHBACK_DISTANCE)
 		Element.AIR:
-			# print(self.name + " applies AIR (Pushback) effect to " + current_target.name)
 			current_target.apply_pushback(PUSHBACK_DISTANCE)
