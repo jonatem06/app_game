@@ -1,0 +1,16 @@
+# This is a placeholder for the GameUI scene.
+# The actual scene structure would be:
+# GameUI (Control)
+# |- MarginContainer (MarginContainer)
+# |  |- VBoxContainer (VBoxContainer)
+# |  |  |- InfoBar (HBoxContainer)
+# |  |  |  |- LivesLabel (Label) - Text: "Lives: 5"
+# |  |  |  |- CoinsLabel (Label) - Text: "Coins: 600"
+# |  |  |  |- WaveLabel (Label)  - Text: "Wave: 0/0"
+# |  |  |- DefenderButtons (HBoxContainer)
+# |  |  |  |- BuyWarriorButton (Button) - Text: "Warrior (100)"
+# |  |  |  |- BuyArcherButton (Button)  - Text: "Archer (150)"
+# |  |  |  |- BuyMageButton (Button)    - Text: "Mage (200)"
+# |  |- MessageLabel (Label) - Optional, for messages.
+#
+# The script game_ui.gd would be attached to the root GameUI node.
