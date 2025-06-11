@@ -27,15 +27,24 @@ and some advanced gameplay interactions are the next major steps.
             *   Fuego: Burn (Daño por tiempo).
             *   Hielo: Slow (Ralentiza enemigos).
             *   Tierra/Aire: Pushback (Empuja enemigos hacia atrás en el camino).
+        *   **Targeting AI:** Defenders can now use different targeting strategies:
+            *   `NEAREST_TO_SELF`: Targets the enemy closest to the defender.
+            *   `NEAREST_TO_END`: Targets the enemy closest to the end of the path.
+            *   `LOWEST_HEALTH`: Targets the enemy with the least current health.
+            *   `HIGHEST_HEALTH`: Targets the enemy with the most current health.
+            *   This is configurable per defender type/instance.
+        *   **Tower Upgrades (Logic):** Defenders can be upgraded through multiple levels (e.g., 1-3).
+            *   Upgrading improves stats like damage, range, and attack speed.
+            *   Each defender type defines its own upgrade costs and stat progression.
+            *   `GameManager.gd` handles the logic for attempting an upgrade and spending coins. (UI for this is a future step).
     *   **Atacantes (`Demon.gd`, `DemonBoss.gd`):**
         *   Defined stats: health, speed, gold reward upon defeat.
         *   **Vida de Demonios Escala por Oleada:** Demonios normales tienen más vida en oleadas posteriores (base + 5 por oleada).
         *   Atacantes siguen el camino generado y dañan el castillo si llegan al final.
+        *   Can be affected by elemental status effects (burn, slow, pushback).
+        *   Report their path progress for targeting purposes.
 *   **Game State & Economy:**
     *   `GameManager.gd` (Autoload/Singleton) tracks player lives (5 base, -1 por demonio, -2 por jefe) y monedas.
-    *   Monedas iniciales: 600 (se resetean por nivel).
-    *   Ganancia de monedas: 75 por demonio, 100 por jefe.
-    *   Sistema de compra de defensores con validación de coste.
 *   **Defender Placement System:**
     *   `MainGame.gd` y `GameUI.gd` interactúan con `GameManager.gd`.
     *   Logic to place defenders on a `TileMap` (conceptual, requiere `TileSet` en editor).
@@ -44,12 +53,16 @@ and some advanced gameplay interactions are the next major steps.
 *   **Level Configuration:**
     *   `LevelConfiguration.gd` (Resource script) permite definir niveles en archivos `.tres`.
     *   Configurable: nombre, tamaño de mapa, semilla de camino, número de oleadas.
+    *   Examples: `level_1.tres`, `level_2.tres`, `level_3.tres` created.
     *   `MainGame.gd` carga estas configuraciones para cada nivel.
 *   **Basic UI:**
     *   `GameUI.gd` muestra vidas, monedas, información de oleada.
     *   Botones para iniciar la compra de defensores.
+    *   **Tower Unlock UI:** Buttons for purchasing towers are now dynamically enabled/disabled based on which towers the player has unlocked.
 *   **Main Game Orchestration:**
     *   `MainGame.gd` ensambla y coordina los diferentes sistemas (pathfinding, oleadas, UI, colocación, inicio de nivel).
+*   **Progression Systems (Logic):**
+    *   **Tower Unlocking:** Players start with the "Warrior" and can unlock "Archer" and "Mage" by completing specific levels. `GameManager.gd` tracks unlocked towers.
 
 ## Estructura del Proyecto (Scripts Clave)
 
@@ -91,6 +104,7 @@ Una vez que el proyecto está importado en Godot Engine:
 1.  **Escena Principal:**
     *   El proyecto está configurado para ejecutar `res://src/main_game.tscn` como la escena principal.
     *   **Nota:** `main_game.tscn` y las escenas de los defensores (`warrior.tscn`, etc.) son actualmente placeholders y necesitan ser construidas/editadas en el editor de Godot para añadir nodos visuales (Sprites, TileSet para el TileMap, etc.) y conectar nodos `onready var` correctamente.
+    *   Para probar diferentes niveles, la variable `level_config_path` en `MainGame.gd` (o en la escena `MainGame.tscn` en el editor) debe ser cambiada para apuntar al archivo `.tres` del nivel deseado (ej: `res://src/levels/level_2.tres`).
 2.  **Ejecutar el Juego desde el Editor:**
     *   Dentro del editor de Godot, presiona el botón "Ejecutar Proyecto" (F5).
 3.  **Exportar (Web, Android, iOS):**
@@ -103,6 +117,7 @@ Una vez que el proyecto está importado en Godot Engine:
     *   Crear/completar `MainGame.tscn` con los nodos `TileMap` (y su `TileSet`), contenedores, e instancia de `GameUI`.
     *   Crear/completar las escenas de los defensores y atacantes con `Sprite`, `CollisionShape2D`, etc.
 *   **Implementar Interacción de Colocación Visual:**
+    *   UI para seleccionar torres y activar mejoras.
     *   Conectar clics del ratón en el `TileMap` para la selección de celdas.
     *   Feedback visual para el modo de colocación.
 *   **Desarrollar Assets Visuales y de Audio.**
