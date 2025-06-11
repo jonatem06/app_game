@@ -175,3 +175,23 @@ func apply_pushback(distance_pixels: float):
 	self.current_path_index = pushed_back_target_index
 
 	print(self.name + " was PUSHED BACK. New pos: " + str(get_position()) + ", new path target index: " + str(self.current_path_index))
+
+func get_path_progress() -> float:
+	if path_points.empty() or path_points.size() == 0:
+		return 0.0 # No hay camino o está vacío
+
+	# Si current_path_index es el índice del *siguiente* waypoint que el attacker está buscando.
+	# path_points.size() es el número total de waypoints en el camino.
+	# El primer waypoint es path_points[0], el último es path_points[path_points.size() - 1].
+
+	# Si current_path_index ya alcanzó o superó path_points.size(), significa que llegó al final.
+	if current_path_index >= path_points.size():
+		return 1.0
+
+	# Si el camino tiene puntos, path_points.size() es al menos 1.
+	# El progreso se calcula como la fracción de waypoints alcanzados.
+	# current_path_index representa el número de waypoints ya visitados (o el índice del siguiente a visitar).
+	# Si current_path_index = 0, está en camino al primer waypoint (índice 0).
+	# Si current_path_index = 1, ha llegado al waypoint 0 y está en camino al waypoint 1.
+	# Así, current_path_index es el número de segmentos completados o el número de puntos visitados.
+	return float(current_path_index) / float(path_points.size())

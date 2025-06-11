@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://src/levels/level_configuration.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+level_name = "Corridor of Doom"
+grid_width = 18
+grid_height = 22 # Más alto que ancho
+path_seed = 101112
+number_of_waves = 7 # Máximo de oleadas por defecto de WaveManager

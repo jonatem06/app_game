@@ -109,7 +109,18 @@ func _on_game_over():
 
 func _on_all_waves_completed():
 	print("MainGame: All waves completed! Level Won!")
-	# get_tree().paused = true
+	# get_tree().paused = true # Opcional
+
+	# Ejemplo de desbloqueo de torre al ganar un nivel
+	# Podríamos tener una lógica más compleja (ej: qué nivel desbloquea qué)
+	if current_level_config and current_level_config.level_name == "The First Stand": # Si ganamos el Nivel 1
+		if GameManager.has_method("unlock_tower"):
+			GameManager.unlock_tower("Archer")
+	elif current_level_config and current_level_config.level_name == "The Winding Path": # Si ganamos el Nivel 2
+		 if GameManager.has_method("unlock_tower"):
+			GameManager.unlock_tower("Mage")
+
+	# Aquí se podría cargar el siguiente nivel o ir a una pantalla de victoria/mapa de niveles.
 
 func _on_defender_purchase_approved(defender_type_string: String, cost: int, grid_click_position: Vector2):
 	print("MainGame: Received defender_purchase_approved for " + defender_type_string + " at map click (simulated): " + str(grid_click_position))
