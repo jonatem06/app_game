@@ -1,0 +1,107 @@
+; Godot Engine Project Configuration File.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+_global_script_classes=[ {
+"base": "Node",
+"class": "GameManager",
+"language": "GDScript",
+"path": "res://src/core/game_manager.gd"
+}, {
+"base": "Node",
+"class": "PathGenerator",
+"language": "GDScript",
+"path": "res://src/core/path_generator.gd"
+}, {
+"base": "Node",
+"class": "WaveManager",
+"language": "GDScript",
+"path": "res://src/core/wave_manager.gd"
+}, {
+"base": "Control",
+"class": "GameUI",
+"language": "GDScript",
+"path": "res://src/ui/game_ui.gd"
+}, {
+"base": "Node2D",
+"class": "GameEntity",
+"language": "GDScript",
+"path": "res://src/core/entities/entity.gd"
+}, {
+"base": "GameEntity",
+"class": "Attacker",
+"language": "GDScript",
+"path": "res://src/core/entities/attacker.gd"
+}, {
+"base": "Attacker",
+"class": "Demon",
+"language": "GDScript",
+"path": "res://src/core/entities/attackers/demon.gd"
+}, {
+"base": "Attacker",
+"class": "DemonBoss",
+"language": "GDScript",
+"path": "res://src/core/entities/attackers/demon_boss.gd"
+}, {
+"base": "GameEntity",
+"class": "Defender",
+"language": "GDScript",
+"path": "res://src/core/entities/defender.gd"
+}, {
+"base": "Defender",
+"class": "Warrior",
+"language": "GDScript",
+"path": "res://src/core/entities/defenders/warrior.gd"
+}, {
+"base": "Defender",
+"class": "Archer",
+"language": "GDScript",
+"path": "res://src/core/entities/defenders/archer.gd"
+}, {
+"base": "Defender",
+"class": "Mage",
+"language": "GDScript",
+"path": "res://src/core/entities/defenders/mage.gd"
+}, {
+"base": "Resource",
+"class": "LevelConfiguration",
+"language": "GDScript",
+"path": "res://src/levels/level_configuration.gd"
+} ]
+_global_script_class_icons={
+"GameManager": "",
+"PathGenerator": "",
+"WaveManager": "",
+"GameUI": "",
+"GameEntity": "",
+"Attacker": "",
+"Demon": "",
+"DemonBoss": "",
+"Defender": "",
+"Warrior": "",
+"Archer": "",
+"Mage": "",
+"LevelConfiguration": ""
+}
+
+[application]
+
+config/name="Tower Defense Game"
+run/main_scene="res://src/main_game.tscn"
+config/icon="res://icon.png"
+
+[autoload]
+
+GameManager="*res://src/core/game_manager.gd"
+
+[display]
+
+window/size/width=1024
+window/size/height=600
+
+[rendering]
+
+environment/default_environment="res://default_env.tres"

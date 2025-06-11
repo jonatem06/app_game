@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=2]
+
+; Main Game Scene - Placeholder
+; Esta escena debería ser construida en el editor de Godot.
+; Debería tener una estructura de nodos como la descrita en el plan,
+; y tener src/main_game.gd asignado como su script.
+; Por ejemplo:
+; MainGame (Node, script: main_game.gd)
+;  |- GameBoard (Node2D)
+;  |   |- TileMap (TileMap)
+;  |   |- PathDisplay (Line2D)
+;  |   |- Defenders (Node2D)
+;  |   |- Attackers (Node2D)
+;  |- UI (CanvasLayer)
+;      |- GameUI (Instance of game_ui.tscn)
+
+[ext_resource path="res://src/main_game.gd" type="Script" id=1]
+
+[node name="MainGame" type="Node"]
+script = ExtResource( 1 )
