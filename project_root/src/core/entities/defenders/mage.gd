@@ -16,7 +16,7 @@ const PUSHBACK_DISTANCE = 50.0
 func _init(element: int = Element.FIRE): # Permitir especificar elemento al crear
 	# Parámetros para super._init:
 	# p_start_health, p_base_damage, p_base_range, p_base_speed, p_cost
-	super._init(80.0, 8.0, 200.0, 0.8, 200) # Salud, Daño Base, Rango Base, Vel Ataque Base, Costo Inicial
+	super._init(80.0, 8.0, 200.0, 7.0, 200) # p_base_speed cambiado a 7.0
 
 	self.elemental_type = element
 	match element:
@@ -28,16 +28,10 @@ func _init(element: int = Element.FIRE): # Permitir especificar elemento al crea
 
 	# Personalización de mejoras para el Mago (opcional):
 	# Los costos de mejora ya están personalizados en la versión anterior, los adaptaremos.
-	self.upgrade_costs = [125, 250, 375] # Ejemplo: L1->2 (125), L2->3 (250), L3->4 (375)
-
-	# Si tuviera aumentos de daño aditivos diferentes al genérico de Defender.gd:
-	# self.additive_damage_upgrades = [2, 4, 6] # Ej: Daño: +2 (L2), +4 (L3), +6 (L4)
-	# Si tuviera aumentos de rango aditivos diferentes al genérico de Defender.gd:
-	# self.additive_range_upgrades = [15, 25, 35] # Ej: Rango: +15 (L2), +25 (L3), +35 (L4)
-	# También podría tener mejoras para `status_chance`.
-
-	# Los _factors multiplicativos y la llamada a apply_upgrade_stats() se eliminan.
-	# La llamada a apply_upgrade_stats() en Defender._init es suficiente.
+	self.upgrade_costs = [125, 250, 375]
+	# self.additive_damage_upgrades = [3, 6, 5] # Usará el de Defender.gd
+	# self.additive_range_upgrades = [2, 2, 2]  # Usará el de Defender.gd
+	self.additive_speed_upgrades = [3, 3, 3] # Mejora1: +3, Mejora2: +3, Mejora3: +3
 
 func attack():
 	super.attack()

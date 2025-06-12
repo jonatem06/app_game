@@ -5,12 +5,10 @@ class_name Defender
 enum TargetingPriority { NEAREST_TO_SELF, NEAREST_TO_END, LOWEST_HEALTH, HIGHEST_HEALTH }
 export var targeting_priority: int = TargetingPriority.NEAREST_TO_SELF
 
-# Stats base (serán los del Nivel 1)
 var base_attack_damage: float = 10.0
 var base_attack_range: float = 100.0
 var base_attack_speed: float = 1.0
 
-# Stats actuales (modificados por mejoras)
 var attack_damage: float
 var attack_range: float
 var attack_speed: float
@@ -19,15 +17,19 @@ var cost: int = 100
 var target: Attacker = null
 var attack_cooldown: float = 0.0
 
-# --- Sistema de Mejoras ---
 var current_upgrade_level: int = 1
-const MAX_UPGRADE_LEVEL: int = 4 # Nivel 1 (base) + 3 mejoras
+const MAX_UPGRADE_LEVEL: int = 4
 
-var upgrade_costs: Array = [75, 125, 200] # Costo L1->2, L2->3, L3->4
+var upgrade_costs: Array = [75, 125, 200]
 
-# Aumentos ADITIVOS por cada mejora sobre el valor del nivel anterior
-var additive_damage_upgrades: Array = [3, 6, 5] # Mejora1: +3, Mejora2: +6, Mejora3: +5
-var additive_range_upgrades: Array = [2, 2, 2]  # Mejora1: +2, Mejora2: +2, Mejora3: +2
+var additive_damage_upgrades: Array = [3, 6, 5]
+var additive_range_upgrades: Array = [2, 2, 2]
+# Array para los aumentos aditivos de velocidad de ataque por cada mejora.
+# Los valores específicos serán definidos por las subclases (Warrior, Archer, Mage).
+# Aquí puede ser un array vacío o con valores genéricos si alguna torre no lo define.
+# Por seguridad, inicializarlo vacío. Las subclases DEBEN poblarlo si quieren mejoras de velocidad.
+var additive_speed_upgrades: Array = []
+
 
 func _init(p_start_health: float,
 			p_base_damage: float, p_base_range: float, p_base_speed: float,
@@ -39,27 +41,40 @@ func _init(p_start_health: float,
 	self.base_attack_speed = p_base_speed
 	self.cost = p_cost
 
-	apply_upgrade_stats() # Aplicar stats iniciales (Nivel 1)
+	apply_upgrade_stats()
 
 func apply_upgrade_stats():
 	var calculated_damage = base_attack_damage
 	var calculated_range = base_attack_range
+	var calculated_speed = base_attack_speed # Iniciar con la base
 
-	if current_upgrade_level > 1: # Si hay al menos una mejora
+	if current_upgrade_level > 1:
 		for i in range(current_upgrade_level - 1):
+			# Daño
 			if i < additive_damage_upgrades.size():
 				calculated_damage += additive_damage_upgrades[i]
 			else:
 				printerr(name + ": Missing additive_damage_upgrades definition for upgrade step " + str(i+1))
 
+			# Rango
 			if i < additive_range_upgrades.size():
 				calculated_range += additive_range_upgrades[i]
 			else:
 				printerr(name + ": Missing additive_range_upgrades definition for upgrade step " + str(i+1))
 
+			# Velocidad de Ataque
+			if i < additive_speed_upgrades.size():
+				calculated_speed += additive_speed_upgrades[i]
+			else:
+				# Si no hay definición para este paso de mejora de velocidad, no se suma nada.
+				# Esto permite que algunas torres no mejoren su velocidad si el array está vacío o es corto.
+				# No es un error, es un comportamiento esperado si no se define.
+				# print(name + ": No additive_speed_upgrades definition for upgrade step " + str(i+1) + ". Speed remains at previous level's increase.")
+				pass
+
 	self.attack_damage = calculated_damage
 	self.attack_range = calculated_range
-	self.attack_speed = base_attack_speed # Velocidad de ataque no cambia con estas mejoras
+	self.attack_speed = calculated_speed # Aplicar velocidad calculada
 
 func can_upgrade() -> bool:
 	return current_upgrade_level < MAX_UPGRADE_LEVEL
@@ -73,17 +88,19 @@ func get_next_upgrade_cost() -> int:
 			return -1
 	return -1
 
-func upgrade():
+func upgrade(): # Sobreescribir para asegurar que el print incluya la velocidad
 	if not can_upgrade():
 		return false
 
 	current_upgrade_level += 1
 	apply_upgrade_stats()
 	print(name + " upgraded to Level " + str(current_upgrade_level) +
-		  ". New Damage: " + str(attack_damage) +
-		  ", New Range: " + str(attack_range) +
-		  " (Speed: " + str(attack_speed) + ")")
+		  ". Damage: " + str(attack_damage) +
+		  ", Range: " + str(attack_range) +
+		  ", Speed: " + str(attack_speed) + ")") # Asegurar que Speed esté aquí
 	return true
+
+# --- Resto de funciones de Defender (find_target, attack, _process, etc.) sin cambios ---
 
 func _process(delta: float):
 	if is_dead: return
@@ -133,12 +150,10 @@ func find_nearest_to_end(targets_in_range: Array) -> Attacker:
 	var target_most_advanced: Attacker = null; var max_progress: float = -1.0
 	var fallback_to_nearest = true
 	for t in targets_in_range:
-		if t.has_method("get_path_progress"): # Check if attacker can report progress
-			fallback_to_nearest = false # At least one target can report progress
+		if t.has_method("get_path_progress"):
+			fallback_to_nearest = false
 			var progress = t.get_path_progress()
 			if progress > max_progress: max_progress = progress; target_most_advanced = t
-	# If no target could report progress (e.g. all were of a type that doesn't implement get_path_progress)
-	# and the list of targets in range was not empty, then fallback to nearest.
 	if fallback_to_nearest and not targets_in_range.empty(): return find_nearest_to_self(targets_in_range)
 	return target_most_advanced
 
@@ -146,7 +161,7 @@ func attack():
 	if not target or target.is_dead: return
 	target.take_damage(attack_damage)
 	if attack_speed > 0: attack_cooldown = 1.0 / attack_speed
-	else: attack_cooldown = INF # Should not happen if base_attack_speed is > 0
+	else: attack_cooldown = INF
 
 func die():
 	super.die()

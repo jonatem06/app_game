@@ -39,7 +39,10 @@ and some advanced gameplay interactions are the next major steps.
         *   **Tower Upgrades (Logic):** Defenders can be upgraded through 4 levels (Base + 3 upgrades).
             *   **Damage:** Increases additively with each upgrade (e.g., Base, Base+3, Base+3+6, Base+3+6+5).
             *   **Range:** Increases additively with each upgrade (e.g., Base, Base+2, Base+2+2, Base+2+2+2).
-            *   **Attack Speed:** Remains constant at its base value.
+            *   **Attack Speed (Ataques por Segundo):** Increases additively with each upgrade.
+                *   Guerrero: Base 3.0; Mejoras: +4, +4, +4 (Total Nivel 4: 15.0)
+                *   Arquero: Base 5.0; Mejoras: +3, +3, +3 (Total Nivel 4: 14.0)
+                *   Mago: Base 7.0; Mejoras: +3, +3, +3 (Total Nivel 4: 16.0)
             *   Each defender type defines its own upgrade costs and stat progression.
             *   `GameManager.gd` handles the logic for attempting an upgrade and spending coins. (UI for this is a future step).
     *   **Atacantes (`Demon.gd`, `DemonBoss.gd`):**
